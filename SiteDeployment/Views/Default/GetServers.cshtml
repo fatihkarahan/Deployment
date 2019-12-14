@@ -1,0 +1,71 @@
+﻿@model List<Deployment.Project>
+
+
+@foreach (var project in Model)
+{
+    <table class="tg">
+        <tr>
+            <th colspan="3">
+                <button class="bWatch" onclick="startwatching('@project.Name', this)"></button>
+                <button class="bCreate" onclick="Create('@project.Name')"></button>
+                <div class="info" id="@string.Format("{0}_info",project.Name)"></div>                
+                </th>
+            <th colspan="7">
+                <h2>@project.Desc</h2>
+
+            </th>
+        </tr>
+
+        @{
+    int index = 0;
+    string css = "";
+        }
+
+        @foreach (var server in project.Servers)
+        {
+            if (index % 2 == 0)
+            {
+                css = "tg-4eph";
+            }
+            else
+            {
+                css = "tg-031e";
+            }
+
+            var key = project.Name + "_" + server.Name;
+            
+            <tr>
+                <td class="@css"><a href="http://@server.Ip" target="_blank">@server.Name</a></td>
+                <td class="@css" style="width:50px" id="@key"></td>
+                <td class="@css info" style="width:300px" id="@string.Format("{0}_info", key)"></td>
+                <td class="@css">
+                    <button class="bOpen" onclick="Open('@key');"></button>
+                </td>
+                <td class="@css">
+                    <button class="bClose" onclick="Close('@key');" />
+                </td>
+                <td class="@css">
+                    <button class="bReset" onclick="Reset('@key');" />
+                </td>
+                <td class="@css">
+                    <button class="bBackup" onclick="Backup('@key');" />
+                </td>
+                <td class="@css">
+                    <button class="bRestore" onclick="ShowBackupFiles('@key',this);" />
+                </td>
+                <td class="@css">
+                    <button class="bCheck" onclick="Check('@key');" />
+                </td>
+                <td class="@css">
+                    <button class="bDeploy" onclick="Deploy('@key');" />
+                </td>
+            </tr>           
+            
+            index++;
+        }
+    </table>
+    <br />
+}
+
+
+

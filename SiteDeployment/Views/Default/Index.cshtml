@@ -1,0 +1,212 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>dr.com.tr deployments</h1>
+
+@Html.Partial("~/Views/Default/GetServers.cshtml", ViewData["projects"])
+
+
+
+<div id="allfiles"></div>
+
+<div id="dialog-confirm">
+</div>
+
+<script>
+
+    function getDetailData(msg, key, data) {
+        var cont = '#' + key + '_detailinfo';
+        var content = '<a href="javascript:void(0);" onclick="showdetail(\'' + cont + '\',\'' + key + '\')">' + msg + '</a>';
+        content += '<div style="display:none" id="' + key + '_detailinfo">' + data + '</div>'
+        $('#' + key + '_detailinfo').remove();
+        return content;
+    }
+
+    function showdetail(cont, tt) {
+        $(function () {
+            $(cont).dialog({ height: 600, minWidth: 600, title: tt });
+        });
+    }
+
+    function showInfo(key, msg) {
+        $('#' + key + '_info').html(msg);
+        $('#' + key + '_info').activity({ segments: 8, steps: 3, opacity: 0.3, width: 2, space: 0, length: 3, color: '#0b0b0b', speed: 1.5, padding: 0, align: 'right' });
+    }
+
+    function getMenu(mid) {
+        if ($('#' + mid).size() <= 0) {
+            $('#allfiles').append('<ul id="' + mid + '"></ul>');
+            $('#' + mid).menu();
+        }
+
+        return $('#' + mid);
+    }
+
+    function showConfirmation(title, msg, callback) {
+        $("#dialog-confirm").empty();
+        $("#dialog-confirm").text(msg);
+        $("#dialog-confirm").dialog({
+            resizable: false,
+            title: title,
+            height: 200,
+            modal: true,
+            buttons: {
+                "Ok": function () {
+                    callback();
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    }
+
+    function Backup(srv, confirm) {
+        if (typeof confirm === 'undefined') { confirm = true; }
+
+        if (confirm) {
+            showConfirmation('Backup site', 'Are you sure!', function () { Backup(srv, false) });
+        } else {
+            showInfo(srv, 'Backup started');
+            $.getJSON("/default/backup?server=" + srv).done(function (data) {
+                $('#' + srv + '_info').html(getDetailData('Backup finished', srv, data));
+            });
+        }
+    }
+
+    function Restore(srv, file) {
+        showInfo(srv, 'Restore started');
+        $.getJSON("/default/restore?server=" + srv + "&filename=" + file).done(function (data) {
+            $('#' + srv + '_info').html(getDetailData('Restore finished', srv, data));
+        });
+    }
+
+    function ShowBackupFiles(srv, src) {
+        $.getJSON("/default/getbackupfiles?server=" + srv).done(function (data) {
+            var m = getMenu(srv + '_files');
+            m.empty();
+            $.each(data, function (index, file) {
+                var li = $('<li/>');
+                li.text(file);
+                li.click(function () {
+                    showConfirmation('Restore site', 'Make sure selected file is correct and server closed for requests!', function () { Restore(srv, file) });
+                });
+                li.appendTo(m);
+            });
+            m.menu("refresh");
+            var menu = m.show().position({ my: 'left top', at: 'left bottom', of: src });
+            $(document).one("click", function () { menu.hide() });
+            return false;
+        });
+    }
+
+    function Create(prj, confirm) {
+        if (typeof confirm === 'undefined') { confirm = true; }
+
+        if (confirm) {
+            showConfirmation('Create package', 'Deployment package will be created. Are you sure?', function () { Create(prj, false) });
+        } else {
+            showInfo(prj, 'Creating deployment package');
+            $.getJSON("/default/create?project=" + prj).done(function (data) {
+                $('#' + prj + '_info').html(getDetailData('Deployment package creation finished', prj, data));
+            });
+        }
+    }
+
+    function Check(srv) {
+        showInfo(srv, 'Checking deployment');
+        $.getJSON("/default/check?server=" + srv).done(function (data) {
+            $('#' + srv + '_info').html(getDetailData('Check finished', srv, data));
+        });
+    }
+
+    function Deploy(srv, confirm) {
+        if (typeof confirm === 'undefined') { confirm = true; }
+
+        if (confirm) {
+            showConfirmation('Deploy site', 'Site will be deployed. Make sure site closed for requests. Are you sure?', function () { Deploy(srv, false) });
+        } else {
+            showInfo(srv, 'Deployment started');
+            $.getJSON("/default/Deploy?server=" + srv).done(function (data) {
+                $('#' + srv + '_info').html(getDetailData('Deploy finished', srv, data));
+            });
+        }
+    }
+
+    function Open(srv, confirm) {
+        if (typeof confirm === 'undefined') { confirm = true; }
+
+        if (confirm) {
+            showConfirmation('Open site', 'Site will be opened for requests. Are you sure?', function () { Open(srv, false) });
+        } else {
+            showInfo(srv, 'Server being opened for new requests');
+            $.getJSON("/default/open?server=" + srv).done(function (data) {
+                $('#' + srv + '_info').html(getDetailData('Server opened', srv, data));
+            });
+        }
+    }
+
+    function Reset(srv, confirm) {
+        if (typeof confirm === 'undefined') { confirm = true; }
+
+        if (confirm) {
+            showConfirmation('IIS Reset', 'IIS will be reset. Are you sure?', function () { Reset(srv, false) });
+        } else {
+            showInfo(srv, 'IIS Reset command run.');
+            $.getJSON("/default/reset?server=" + srv).done(function (data) {
+                $('#' + srv + '_info').html(getDetailData('IIS Resetted', srv, data));
+            });
+        }
+    }
+
+    function Close(srv, confirm) {
+        if (typeof confirm === 'undefined') { confirm = true; }
+
+        if (confirm) {
+            showConfirmation('Close site', 'Site will be closed for requests. Are you sure?', function () { Close(srv, false) });
+        } else {
+            showInfo(srv, 'Server being closed for new requests');
+            $.getJSON("/default/close?server=" + srv).done(function (data) {
+                $('#' + srv + '_info').html(getDetailData('Server closed', srv, data));
+            });
+        }
+    }
+
+    function getrequests(srv) {
+        $.getJSON("/default/getrequests?server=" + srv, {}).done(function (data) {
+            $('#' + srv).html(data.toFixed(2));
+        });
+
+        setTimeout(function () { getrequests(srv); }, 1000);
+    }
+
+    function startwatching(key, src) {
+        $.getJSON("/default/getservers?key=" + key).done(function (data) {
+            $.each(data, function (index, srv) {
+                setTimeout(function () { getrequests(key + '_' + srv.Name); }, 1000);
+            });
+        });
+
+        $(src).button('option', 'disabled', true);
+    }
+
+    $(document).ready(function () {
+        $('.bWatch').button({ label: 'Watch server web requests', text: false, icons: { primary: 'ui-icon-search' } });
+        $('.bCreate').button({ label: 'Create deployment package', text: false, icons: { primary: 'ui-icon-suitcase' } });
+        $('.bOpen').button({ label: 'Open server for requests', text: false, icons: { primary: 'ui-icon-unlocked' } });
+        $('.bReset').button({ label: 'IIS Reset', text: false, icons: { primary: 'ui-icon-refresh' } });
+        $('.bClose').button({ label: 'Close server for requests', text: false, icons: { primary: 'ui-icon-locked' } });
+        $('.bBackup').button({ label: 'Backup site', text: false, icons: { primary: 'ui-icon-arrowreturnthick-1-s' } });
+        $('.bRestore').button({ label: 'Restore site from backup file', text: false, icons: { primary: 'ui-icon-arrowreturnthick-1-n' } });
+        $('.bCheck').button({ label: 'Check deployment package', text: false, icons: { primary: 'ui-icon-clipboard' } });
+        $('.bDeploy').button({ label: 'Deploy package to site', text: false, icons: { primary: 'ui-icon-shuffle' } });
+
+
+    });
+
+
+
+</script>

@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+@*    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")     
+    @Styles.Render("~/Content/themes/base/css")*@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+    <script src="~/Scripts/jquery.activity-indicator-1.0.0.min.js"></script>
+
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;border-color:#ccc;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#fff;background-color:#26ADE4;border-top-width:1px;border-bottom-width:1px;}
+.tg .tg-4eph{background-color:#f9f9f9}
+.square {
+	margin: 0px;
+	padding: 0px;
+	color: #000;
+	font-family: Helvetica, Arial, Sans-Serif;
+    vertical-align:baseline;
+}
+    .bWatch{ float:left}
+    .bCreate{ float:left}
+    .bCheck{}
+    .bOpen{}
+    .bClose{}
+    .bBackup{}
+    .bRestore{}
+    .bDeploy{}
+    h2
+    {
+        text-align:right;
+        margin-right:20px;
+        vertical-align:middle;
+    }
+    .info
+    {
+        font-size:12px;
+    }
+    .ui-menu { position: absolute; }
+</style>
+</head>
+<body>
+    @RenderBody()
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

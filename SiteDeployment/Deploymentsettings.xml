@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DeploymentSettings>
+  <Projects>
+    <Project Name="dr" SourceSite="stg.dr.com.tr" Site="yeni.dr.com.tr" Desc="dr.com.tr">
+      <BackupSkip> -skip:objectName=dirPath,absolutePath="content\\uploads|facebook" -skip:objectName=filePath,absolutePath=".*\.xml"</BackupSkip>
+      <DeploySkip> -skip:objectName=filePath,absolutePath=".*\.config|.*\.html|.*\.xml|ping\.ashx|robots\.txt" -skip:objectName=dirPath,absolutePath="content\\uploads|facebook"</DeploySkip>
+      <Servers>
+        <Server Name="DRWEB01" Ip="213.243.35.225" WMIRoot="_LM_W3SVC_3_ROOT" />
+        <Server Name="DRWEB02" Ip="213.243.35.226" WMIRoot="_LM_W3SVC_2_ROOT" />
+        <Server Name="DRWEB03" Ip="213.243.35.224" WMIRoot="_LM_W3SVC_2_ROOT" />
+        <Server Name="DRWEB04" Ip="213.243.35.236" WMIRoot="_LM_W3SVC_2_ROOT" />
+        <Server Name="DRWEB05" Ip="213.243.35.232" WMIRoot="_LM_W3SVC_2_ROOT" />
+      </Servers>
+    </Project>
+    <Project Name="sdr" SourceSite="stgsrvs.dr.com.tr" Site="services.dr.com.tr" Desc="services.dr.com.tr">
+      <BackupSkip></BackupSkip>
+      <DeploySkip> -skip:objectName=filePath,absolutePath=".*\.config|ping\.ashx"</DeploySkip>
+      <Servers>
+        <Server Name="DRSVC01" Ip="213.243.35.231" WMIRoot="_LM_W3SVC_2_ROOT" />
+        <!--<Server Name="drimg2" Ip="213.243.35.237:8080" WMIRoot="_LM_W3SVC_4_ROOT" />-->
+      </Servers>
+    </Project>
+    <Project Name="mdr" SourceSite="stgmbl.dr.com.tr" Site="m.dr.com.tr" Desc="m.dr.com.tr">
+      <BackupSkip></BackupSkip>
+      <DeploySkip> -skip:objectName=filePath,absolutePath=".*\.config"</DeploySkip>
+      <Servers>
+        <Server Name="DRWEB01" Ip="213.243.35.230" WMIRoot="_LM_W3SVC_2_ROOT" />
+        <!--<Server Name="drimg1" Ip="213.243.35.234:8090" WMIRoot="_LM_W3SVC_4_ROOT" />-->
+      </Servers>
+    </Project>
+    <Project Name="ssdr" SourceSite="stgsrvs.dr.com.tr" Site="sec.services.dr.com.tr" Desc="sec.services.dr.com.tr">
+      <BackupSkip></BackupSkip>
+      <DeploySkip> -skip:objectName=filePath,absolutePath=".*\.config|ping\.ashx"</DeploySkip>
+      <Servers>
+        <Server Name="DRSVC01" Ip="213.243.35.243" WMIRoot="_LM_W3SVC_5_ROOT" />
+      </Servers>
+    </Project>
+    <Project Name="erp" SourceSite="stgsrvs.dr.com.tr" Site="ERPIntegrationService" Desc="ERPIntegrationService">
+      <BackupSkip></BackupSkip>
+      <DeploySkip> -skip:objectName=filePath,absolutePath=".*\.config|.*\.ashx|.*\.asmx|ping\.ashx"</DeploySkip>
+      <Servers>
+        <Server Name="DRSVC01" Ip="213.243.35.231:8085" WMIRoot="_LM_W3SVC_3_ROOT" />
+      </Servers>
+    </Project>
+  </Projects>
+  <MsDeployPath>C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe</MsDeployPath>
+  <WMIUser>Administrator</WMIUser>
+  <WMIPassword>dienar!%35Tgb</WMIPassword>
+  <WMIAuthority>ntlmdomain:drwebdomain</WMIAuthority>
+  <WMIPath>\\{0}\root\CIMV2</WMIPath>
+  <WMIQuery>SELECT * FROM Win32_PerfRawData_W3SVC_WebService WHERE Name = '{0}'</WMIQuery>
+  <!--{iis} {server}{site\bck\sitetime.zip}{exslusions}-->
+  <BackupParams> -source:contentpath='{0}',computerName='{1}',userName='drwebdomain\WDeployUser',password='1qaz-2wsx',includeAcls='False' -dest:package='{2}', -verb:sync -disableLink:AppPoolExtension -disableLink:FrameworkConfigExtension -allowUntrusted -disableLink:CertificateExtension {3}</BackupParams>
+  <!---{bck\sitetime.zip} {iis} {server}-->
+  <RestoreParams> -source:package={0} -dest:contentpath='{1}',computerName='{2}',userName='drwebdomain\WDeployUser',password='1qaz-2wsx',includeAcls='False' -verb:sync</RestoreParams>
+  <!--{iis} {site\site.zip} {exclusions}-->
+  <CreateParams> -source:contentpath='{0}' -dest:package={1}, -verb:sync -disableLink:AppPoolExtension -disableLink:FrameworkConfigExtension -disableLink:CertificateExtension {2}</CreateParams>
+  <!--{site\site.zip} {iis} {server}'{exclusions}-->
+  <DeployParams> -source:package={0} -dest:contentpath='{1}',computerName='{2}',userName='drwebdomain\WDeployUser',password='1qaz-2wsx',includeAcls='False' -verb:sync {3}</DeployParams>
+  <DeploymentRootFolder>c:\Deployment</DeploymentRootFolder>
+</DeploymentSettings>
